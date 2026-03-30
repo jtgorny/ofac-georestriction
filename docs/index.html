@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sanctions GeoIP Feed</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7f2;
+        --panel: #ffffff;
+        --ink: #142119;
+        --muted: #516355;
+        --line: #d7e0d5;
+        --accent: #295135;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(41,81,53,0.08), transparent 38%),
+          linear-gradient(180deg, #eef3ec 0%, var(--bg) 100%);
+        color: var(--ink);
+      }
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 20px 72px;
+      }
+      h1 {
+        font-size: clamp(2rem, 5vw, 3.4rem);
+        line-height: 1;
+        margin: 0 0 12px;
+      }
+      p, li {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 12px 30px rgba(20, 33, 25, 0.05);
+      }
+      .codes {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 1.1rem;
+        color: var(--accent);
+      }
+      a {
+        color: var(--accent);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        text-align: left;
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        color: var(--ink);
+      }
+      .small {
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Sanctions GeoIP Feed</h1>
+      <p>
+        Static JSON for country-code-oriented GeoIP blocking, refreshed from OFAC, EU, UK, and UN
+        sanctions sources.
+      </p>
+
+      <section class="panel">
+        <p class="small"><strong>Generated:</strong> 2026-03-30T18:02:49Z</p>
+        <p class="small"><strong>Effective country codes:</strong></p>
+        <p class="codes">AF, BY, CD, CF, CU, IQ, IR, KP, LY, ML, MM, NI, RU, SD, SO, SS, SY, VE, YE</p>
+        <p class="small">
+          <a href="./countries.json">countries.json</a> ·
+          <a href="./sanctions.json">sanctions.json</a> ·
+          <a href="./evidence.json">evidence.json</a>
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>Disclaimer</h2>
+        <p>This feed is an operational, country-code-oriented GeoIP artifact derived from public sanctions sources. It is provided for informational purposes only, is not legal advice, and is not a substitute for sanctions screening, export-control review, or advice from qualified counsel. Country-level blocking is necessarily coarse: many sanctions programs are targeted at specific people, entities, sectors, or regions rather than an entire country. OFAC explicitly states that it does not maintain a single list of countries with which U.S. persons cannot do business. Use this feed carefully and verify obligations against the underlying authorities.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Curation</h2>
+        <p class="small"><strong>Mode:</strong> openai</p>
+        <p class="small"><strong>Model:</strong> gpt-5-mini</p>
+        <p class="small"><strong>Heuristic threshold:</strong> 5</p>
+        <p>Conservative recommendation: block only four country-level codes where the provided evidence explicitly indicates a broad, country‑level baseline from a major sanctioning authority (OFAC) and/or comprehensive multilateral (UN) regimes. Other jurisdictions in the dataset show targeted or multi-authority sanctions regimes that do not, from the supplied evidence alone, justify automatic country-wide GeoIP blocking; these should be left out of the coarse blocklist or escalated for manual review.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Countries</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Authorities</th>
+              <th>Score</th>
+              <th>Blocked</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>AF</td><td>Afghanistan</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>BA</td><td>Bosnia and Herzegovina</td><td>UK</td><td>0</td><td>no</td></tr>
+<tr><td>BY</td><td>Belarus</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>CD</td><td>Democratic Republic of the Congo</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>CF</td><td>Central African Republic</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>CU</td><td>Cuba</td><td>OFAC</td><td>5</td><td>yes</td></tr>
+<tr><td>ET</td><td>Ethiopia</td><td>OFAC</td><td>2</td><td>no</td></tr>
+<tr><td>GN</td><td>Guinea</td><td>EU, UK</td><td>1</td><td>no</td></tr>
+<tr><td>GT</td><td>Guatemala</td><td>EU</td><td>0</td><td>no</td></tr>
+<tr><td>GW</td><td>Guinea-Bissau</td><td>UK, UN</td><td>2</td><td>no</td></tr>
+<tr><td>HK</td><td>Hong Kong</td><td>OFAC</td><td>2</td><td>no</td></tr>
+<tr><td>HT</td><td>Haiti</td><td>EU, UK, UN</td><td>4</td><td>no</td></tr>
+<tr><td>IQ</td><td>Iraq</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>IR</td><td>Iran</td><td>EU, OFAC, UK, UN</td><td>9</td><td>yes</td></tr>
+<tr><td>KP</td><td>North Korea</td><td>EU, OFAC, UK, UN</td><td>9</td><td>yes</td></tr>
+<tr><td>LB</td><td>Lebanon</td><td>OFAC</td><td>2</td><td>no</td></tr>
+<tr><td>LY</td><td>Libya</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>MD</td><td>Moldova</td><td>EU</td><td>0</td><td>no</td></tr>
+<tr><td>ML</td><td>Mali</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>MM</td><td>Myanmar</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>NI</td><td>Nicaragua</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>RU</td><td>Russia</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>SD</td><td>Sudan</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>SO</td><td>Somalia</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>SS</td><td>South Sudan</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+<tr><td>SY</td><td>Syria</td><td>EU, OFAC, UK</td><td>8</td><td>yes</td></tr>
+<tr><td>TN</td><td>Tunisia</td><td>EU</td><td>0</td><td>no</td></tr>
+<tr><td>UA</td><td>Ukraine</td><td>EU</td><td>0</td><td>no</td></tr>
+<tr><td>VE</td><td>Venezuela</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+<tr><td>YE</td><td>Yemen</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>
