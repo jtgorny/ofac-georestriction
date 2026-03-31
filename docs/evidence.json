@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-03-30T18:02:49Z",
+  "generated_at": "2026-03-31T13:15:54Z",
   "disclaimer": "This feed is an operational, country-code-oriented GeoIP artifact derived from public sanctions sources. It is provided for informational purposes only, is not legal advice, and is not a substitute for sanctions screening, export-control review, or advice from qualified counsel. Country-level blocking is necessarily coarse: many sanctions programs are targeted at specific people, entities, sectors, or regions rather than an entire country. OFAC explicitly states that it does not maintain a single list of countries with which U.S. persons cannot do business. Use this feed carefully and verify obligations against the underlying authorities.",
   "curation": {
-    "mode": "openai",
+    "mode": "heuristic",
     "model": "gpt-5-mini",
     "heuristic_baseline_country_codes": [
       "AF",
@@ -25,12 +25,7 @@
       "VE",
       "YE"
     ],
-    "ai_recommended_country_codes": [
-      "CU",
-      "IR",
-      "KP",
-      "SY"
-    ],
+    "ai_recommended_country_codes": [],
     "heuristic_threshold": 5,
     "heuristic_rules": {
       "ofac_broad_country": {
@@ -57,331 +52,10 @@
     "manual_include_country_codes": [],
     "manual_exclude_country_codes": [],
     "notes_by_country_code": {},
-    "ai_summary": "Conservative recommendation: block only four country-level codes where the provided evidence explicitly indicates a broad, country\u2011level baseline from a major sanctioning authority (OFAC) and/or comprehensive multilateral (UN) regimes. Other jurisdictions in the dataset show targeted or multi-authority sanctions regimes that do not, from the supplied evidence alone, justify automatic country-wide GeoIP blocking; these should be left out of the coarse blocklist or escalated for manual review.",
-    "ai_needs_human_review": true,
-    "ai_country_reviews": [
-      {
-        "country_code": "AF",
-        "decision": "do_not_block",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK sanctions present, but no explicit evidence in the provided sources of a broad, country\u2011wide blocking baseline to justify coarse GeoIP blocking.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "BA",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "Only UK regulation listed; evidence indicates targeted sanctions rather than an explicit country\u2011wide blocking baseline.",
-        "supporting_authorities": [
-          "UK"
-        ]
-      },
-      {
-        "country_code": "BY",
-        "decision": "do_not_block",
-        "confidence": "medium",
-        "reason": "Multiple authorities (EU, OFAC, UK) maintain Belarus sanctions, but the provided sources do not state an OFAC \u2018broad-country baseline\u2019 or clear comprehensive country\u2011wide blocking justification in the evidence set.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "CD",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN sanctions exist (UN 1533 Committee). UN involvement and multiple authorities suggest possible stronger controls; needs human review to assess whether measures are country\u2011wide or targeted.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "CF",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN sources (UN 2745 Committee) are present. The evidence suggests significant multilateral measures but does not, by itself, prove a defensible blanket GeoIP block without human assessment.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "CU",
-        "decision": "block",
-        "confidence": "medium",
-        "reason": "OFAC entry explicitly notes a \u2018broad-country baseline\u2019 for Cuba in the provided evidence \u2014 a defensible basis for conservative country-level GeoIP blocking in an operational control set.",
-        "supporting_authorities": [
-          "OFAC"
-        ]
-      },
-      {
-        "country_code": "ET",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "Only OFAC Ethiopia-related sanctions listed without explicit broad-country baseline evidence in the provided sources; treat as targeted unless further evidence is supplied.",
-        "supporting_authorities": [
-          "OFAC"
-        ]
-      },
-      {
-        "country_code": "GN",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "EU and UK sanctions reference present, but no explicit indication in the supplied evidence of a country\u2011wide blocking baseline.",
-        "supporting_authorities": [
-          "EU",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "GT",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "Only EU regime referenced; no evidence provided of a country\u2011level blocking baseline to justify GeoIP blocking.",
-        "supporting_authorities": [
-          "EU"
-        ]
-      },
-      {
-        "country_code": "GW",
-        "decision": "manual_review",
-        "confidence": "low",
-        "reason": "UK and UN (2048 Committee) sanctions are present. UN listing suggests additional concern; recommend human review to determine whether blocking the whole country is defensible operationally.",
-        "supporting_authorities": [
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "HK",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "OFAC Hong Kong-related sanctions are listed, but the evidence provided does not show an OFAC broad-country baseline for Hong Kong; treat as targeted unless further evidence is provided.",
-        "supporting_authorities": [
-          "OFAC"
-        ]
-      },
-      {
-        "country_code": "HT",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/UK/UN (2653 Committee) sanctions are present. Multilateral involvement warrants human review to determine whether measures justify a country-level block.",
-        "supporting_authorities": [
-          "EU",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "IQ",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN (1518 Committee) sanctions present. Given multi-authority and UN committee involvement, human review recommended before applying coarse GeoIP blocking.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "IR",
-        "decision": "block",
-        "confidence": "high",
-        "reason": "Multiple authorities (EU, OFAC, UK, UN) are listed and OFAC is explicitly flagged with a \u2018broad-country baseline\u2019 in the provided evidence \u2014 supports a defensible country-level block for conservative operational control.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "KP",
-        "decision": "block",
-        "confidence": "high",
-        "reason": "Comprehensive multilateral and national sanctions are present (EU, OFAC, UK, UN) and OFAC is explicitly noted as having a \u2018broad-country baseline\u2019 for North Korea in the provided sources \u2014 strong justification for country-level blocking.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "LB",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "OFAC Lebanon-related sanctions listed but no explicit broad-country baseline in provided evidence; treat as targeted.",
-        "supporting_authorities": [
-          "OFAC"
-        ]
-      },
-      {
-        "country_code": "LY",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN (1970 Committee) sanctions are present. Multilateral measures suggest possible broader controls; human review recommended before coarse blocking.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "MD",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "Only EU sanctions regime referenced; no evidence in the provided sources of a country\u2011wide blocking baseline.",
-        "supporting_authorities": [
-          "EU"
-        ]
-      },
-      {
-        "country_code": "ML",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK sanctions listed. Presence of multiple authorities suggests elevated concern, but evidence does not explicitly indicate a broad-country blocking baseline \u2014 human review recommended.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "MM",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK sanctions referenced. Given multiple authorities and known targeted measures, recommend human review to decide if country-level blocking is warranted operationally.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "NI",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK sanctions listed for Nicaragua. Multiple authorities are involved; human review recommended to determine whether blocking the whole country is appropriate.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "RU",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU (multiple RUS regimes), OFAC and UK sanctions are present. While significant, the provided evidence does not explicitly state an OFAC \u2018broad-country baseline\u2019 in these entries; given the complexity and operational impact, human review is recommended before applying an across-the-board GeoIP block.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "SD",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN (1591 Committee) sanctions are present. UN involvement and multiple authorities suggest stronger controls; human assessment needed to determine if country-level blocking is defensible.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "SO",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN (2713 Committee) sanctions present. Multilateral sanctions indicate elevated concern; human review advised before coarse GeoIP blocking.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "SS",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN (2206 Committee) sanctions are listed. Presence of UN committee and multiple authorities warrants human review to assess whether country-wide blocking is justified.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      },
-      {
-        "country_code": "SY",
-        "decision": "block",
-        "confidence": "high",
-        "reason": "OFAC entry explicitly notes a \u2018broad-country baseline\u2019 for Syria in the supplied evidence, and EU/UK sanctions are also listed \u2014 supports a defensible conservative country-level block.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "TN",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "Only EU regime referenced (TUN); no evidence supplied of a country\u2011wide blocking baseline.",
-        "supporting_authorities": [
-          "EU"
-        ]
-      },
-      {
-        "country_code": "UA",
-        "decision": "do_not_block",
-        "confidence": "low",
-        "reason": "Only an EU regime is listed in the supplied evidence. No explicit broad-country blocking baseline in the provided sources to justify wholesale GeoIP blocking.",
-        "supporting_authorities": [
-          "EU"
-        ]
-      },
-      {
-        "country_code": "VE",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK sanctions listed. Given multiple authorities but absence of an explicit OFAC broad-country baseline in the provided evidence, human review recommended before coarse blocking the whole country.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK"
-        ]
-      },
-      {
-        "country_code": "YE",
-        "decision": "manual_review",
-        "confidence": "medium",
-        "reason": "EU/OFAC/UK/UN (2140 Committee) sanctions present. Multilateral sanctions suggest significant controls; human review needed to judge whether a country-level GeoIP block is appropriate.",
-        "supporting_authorities": [
-          "EU",
-          "OFAC",
-          "UK",
-          "UN"
-        ]
-      }
-    ],
-    "ai_error": null
+    "ai_summary": null,
+    "ai_needs_human_review": null,
+    "ai_country_reviews": [],
+    "ai_error": "OPENAI_API_KEY was not present at runtime, so AI review was skipped."
   },
   "countries": [
     {
@@ -480,7 +154,7 @@
           "authority": "UN",
           "title": "1533 Committee (Democratic Republic of the Congo)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -515,7 +189,7 @@
           "authority": "UN",
           "title": "2745 Committee (Central African Republic)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -605,7 +279,7 @@
           "authority": "UN",
           "title": "2048 Committee (Guinea-Bissau)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -647,7 +321,7 @@
           "authority": "UN",
           "title": "2653 Committee (Haiti)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -681,7 +355,7 @@
           "authority": "UN",
           "title": "1518 Committee (Iraq)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -723,7 +397,7 @@
           "authority": "UN",
           "title": "1737 Committee (Iran)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -759,7 +433,7 @@
           "authority": "UN",
           "title": "1718 Committee (DPRK)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -809,7 +483,7 @@
           "authority": "UN",
           "title": "1970 Committee (Libya)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -935,7 +609,7 @@
           "authority": "OFAC",
           "title": "Russian Harmful Foreign Activities Sanctions",
           "url": "https://ofac.treasury.gov/sanctions-programs-and-country-information/russian-harmful-foreign-activities-sanctions",
-          "last_updated": "2026-03-27T12:00:00Z"
+          "last_updated": "2026-03-30T12:00:00Z"
         },
         {
           "authority": "OFAC",
@@ -986,7 +660,7 @@
           "authority": "UN",
           "title": "1591 Committee (Sudan)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -1021,7 +695,7 @@
           "authority": "UN",
           "title": "2713 Committee (Somalia)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -1056,7 +730,7 @@
           "authority": "UN",
           "title": "2206 Committee (South Sudan)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [
@@ -1176,7 +850,7 @@
           "authority": "UN",
           "title": "2140 Committee (Yemen)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-03-28T23:00:02.092Z"
+          "last_updated": "2026-03-30T23:00:00.708Z"
         }
       ],
       "authorities": [

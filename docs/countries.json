@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-30T18:02:49Z",
+  "generated_at": "2026-03-31T13:15:54Z",
   "heuristic_recommended_country_codes": [
     "AF",
     "BY",
@@ -21,12 +21,7 @@
     "VE",
     "YE"
   ],
-  "ai_recommended_country_codes": [
-    "CU",
-    "IR",
-    "KP",
-    "SY"
-  ],
+  "ai_recommended_country_codes": [],
   "effective_geoip_block_country_codes": [
     "AF",
     "BY",
