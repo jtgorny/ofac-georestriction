@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-12T06:24:24Z",
+  "generated_at": "2026-04-13T07:16:01Z",
   "disclaimer": "This feed is an operational, country-code-oriented GeoIP artifact derived from public sanctions sources. It is provided for informational purposes only, is not legal advice, and is not a substitute for sanctions screening, export-control review, or advice from qualified counsel. Country-level blocking is necessarily coarse: many sanctions programs are targeted at specific people, entities, sectors, or regions rather than an entire country. OFAC explicitly states that it does not maintain a single list of countries with which U.S. persons cannot do business. Use this feed carefully and verify obligations against the underlying authorities.",
   "curation": {
     "mode": "heuristic",
