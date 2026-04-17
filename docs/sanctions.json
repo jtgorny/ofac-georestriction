@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T06:58:00Z",
+  "generated_at": "2026-04-17T06:58:45Z",
   "disclaimer": "This feed is an operational, country-code-oriented GeoIP artifact derived from public sanctions sources. It is provided for informational purposes only, is not legal advice, and is not a substitute for sanctions screening, export-control review, or advice from qualified counsel. Country-level blocking is necessarily coarse: many sanctions programs are targeted at specific people, entities, sectors, or regions rather than an entire country. OFAC explicitly states that it does not maintain a single list of countries with which U.S. persons cannot do business. Use this feed carefully and verify obligations against the underlying authorities.",
   "sanctioned_country_codes": [
     "AF",
@@ -103,12 +103,12 @@
     "UK": {
       "publication_url": "https://www.gov.uk/government/publications/the-uk-sanctions-list",
       "source_url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-      "date_generated": "14/04/2026"
+      "date_generated": "16/04/2026"
     },
     "UN": {
       "page_url": "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list",
       "source_url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-      "date_generated": "2026-04-16T05:30:22.381Z"
+      "date_generated": "2026-04-16T23:00:03.909Z"
     }
   },
   "heuristic": {
@@ -156,7 +156,7 @@
           "authority": "UK",
           "title": "The Afghanistan (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -173,7 +173,7 @@
           "authority": "UK",
           "title": "The Bosnia and Herzegovina (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -199,7 +199,7 @@
           "authority": "UK",
           "title": "The Republic of Belarus (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -227,13 +227,13 @@
           "authority": "UK",
           "title": "The Democratic Republic of the Congo (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "1533 Committee (Democratic Republic of the Congo)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -262,13 +262,13 @@
           "authority": "UK",
           "title": "The Central African Republic (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "2745 Committee (Central African Republic)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -322,7 +322,7 @@
           "authority": "UK",
           "title": "The Guinea (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -352,13 +352,13 @@
           "authority": "UK",
           "title": "The Republic of Guinea-Bissau (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "2048 Committee (Guinea-Bissau)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -394,13 +394,13 @@
           "authority": "UK",
           "title": "The Haiti (Sanctions) Regulations 2022",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "2653 Committee (Haiti)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -428,13 +428,13 @@
           "authority": "UK",
           "title": "The Iraq (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "1518 Committee (Iraq)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -464,19 +464,19 @@
           "authority": "UK",
           "title": "The Iran (Sanctions) (Nuclear) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UK",
           "title": "The Iran (Sanctions) Regulations 2023",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "1737 Committee (Iran)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -506,13 +506,13 @@
           "authority": "UK",
           "title": "The Democratic People's Republic of Korea (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "1718 Committee (DPRK)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -556,13 +556,13 @@
           "authority": "UK",
           "title": "The Libya (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "1970 Committee (Libya)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -605,7 +605,7 @@
           "authority": "UK",
           "title": "The Mali (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -633,7 +633,7 @@
           "authority": "UK",
           "title": "The Myanmar (Sanctions) Regulations 2021",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -655,13 +655,13 @@
           "authority": "OFAC",
           "title": "Nicaragua-related Sanctions",
           "url": "https://ofac.treasury.gov/sanctions-programs-and-country-information/nicaragua-related-sanctions",
-          "last_updated": "2026-02-26T12:00:00Z"
+          "last_updated": "2026-04-16T12:00:00Z"
         },
         {
           "authority": "UK",
           "title": "The Nicaragua (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -700,7 +700,7 @@
           "authority": "UK",
           "title": "The Russia (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -733,13 +733,13 @@
           "authority": "UK",
           "title": "The Sudan (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "1591 Committee (Sudan)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -768,13 +768,13 @@
           "authority": "UK",
           "title": "The Somalia (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "2713 Committee (Somalia)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -803,13 +803,13 @@
           "authority": "UK",
           "title": "The South Sudan (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "2206 Committee (South Sudan)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
@@ -839,7 +839,7 @@
           "authority": "UK",
           "title": "The Syria (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -895,7 +895,7 @@
           "authority": "UK",
           "title": "The Venezuela (Sanctions) (EU Exit) Regulations 2019",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         }
       ],
       "authorities": [
@@ -923,13 +923,13 @@
           "authority": "UK",
           "title": "The Yemen (Sanctions) (EU Exit) Regulations 2020",
           "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml",
-          "last_updated": "14/04/2026"
+          "last_updated": "16/04/2026"
         },
         {
           "authority": "UN",
           "title": "2140 Committee (Yemen)",
           "url": "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
-          "last_updated": "2026-04-16T05:30:22.381Z"
+          "last_updated": "2026-04-16T23:00:03.909Z"
         }
       ],
       "authorities": [
