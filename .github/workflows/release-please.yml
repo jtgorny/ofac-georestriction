@@ -1,0 +1,36 @@
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ github.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # The remaining steps run only on the push that merged the release PR.
+      - name: Check out the release commit
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.release.outputs.tag_name }}
+
+      - name: Move the floating major tag to the new release
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag --force "v${{ steps.release.outputs.major }}"
+          git push origin "refs/tags/v${{ steps.release.outputs.major }}" --force

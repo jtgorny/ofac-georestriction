@@ -1,0 +1,31 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  conventional-title:
+    runs-on: ubuntu-latest
+    steps:
+      # Squash merges use the PR title as the commit message, and release-please
+      # derives version numbers from those messages (fix -> patch, feat -> minor,
+      # feat! -> major), so titles must be conventional commits.
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          types: |
+            feat
+            fix
+            perf
+            revert
+            deps
+            docs
+            chore
+            test
+            ci
+            refactor
