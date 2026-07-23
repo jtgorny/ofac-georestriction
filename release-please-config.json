@@ -17,8 +17,6 @@
     { "type": "refactor", "section": "Refactoring" }
   ],
   "packages": {
-    ".": {
-      "release-as": "1.0.0"
-    }
+    ".": {}
   }
 }
