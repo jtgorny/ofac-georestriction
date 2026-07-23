@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sanctions GeoIP Feed</title>
+    <meta name="description" content="Sanctions-informed GeoIP decision-support data with inspectable evidence and limitations.">
+    <title>Sanctions-Informed GeoIP Feed</title>
     <link rel="icon" href="./favicon.ico" sizes="any">
     <style>
       :root {
@@ -46,6 +47,13 @@
         margin-top: 20px;
         box-shadow: 0 12px 30px rgba(20, 33, 25, 0.05);
       }
+      .notice {
+        background: #fffaf0;
+        border-color: #d6b96b;
+      }
+      .notice h2 {
+        margin-top: 0;
+      }
       .codes {
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 1.1rem;
@@ -54,9 +62,17 @@
       a {
         color: var(--accent);
       }
+      .table-scroll {
+        overflow-x: auto;
+      }
       table {
         width: 100%;
         border-collapse: collapse;
+      }
+      caption {
+        text-align: left;
+        color: var(--muted);
+        padding-bottom: 12px;
       }
       th, td {
         text-align: left;
@@ -74,14 +90,19 @@
   </head>
   <body>
     <main>
-      <h1>Sanctions GeoIP Feed</h1>
+      <h1>Sanctions-Informed GeoIP Feed</h1>
       <p>
-        Static JSON for country-code-oriented GeoIP blocking, refreshed from OFAC, EU, UK, and UN
-        sanctions sources.
+        Decision-support JSON for coarse country-level GeoIP restrictions, refreshed from OFAC,
+        EU, UK, and UN sources. This is not sanctions compliance automation.
       </p>
 
+      <section class="panel notice">
+        <h2>Limitations / Not legal advice</h2>
+        <p>This feed is an operational, country-code-oriented GeoIP artifact derived from public sanctions sources. It is provided for informational purposes only, is not legal advice, and is not a substitute for sanctions screening, export-control review, or advice from qualified counsel. Country-level blocking is necessarily coarse: many sanctions programs are targeted at specific people, entities, sectors, or regions rather than an entire country. OFAC explicitly states that it does not maintain a single list of countries with which U.S. persons cannot do business. Use this feed carefully and verify obligations against the underlying authorities.</p>
+      </section>
+
       <section class="panel">
-        <p class="small"><strong>Generated:</strong> 2026-07-23T07:34:43Z</p>
+        <p class="small"><strong>Generated:</strong> 2026-07-23T18:21:14Z</p>
         <p class="small"><strong>Effective country codes:</strong></p>
         <p class="codes">AF, BY, CD, CF, CU, IQ, IR, KP, LY, ML, MM, NI, RU, SD, SO, SS, SY, VE, YE</p>
         <p class="small">
@@ -89,11 +110,6 @@
           <a href="./sanctions.json">sanctions.json</a> ·
           <a href="./evidence.json">evidence.json</a>
         </p>
-      </section>
-
-      <section class="panel">
-        <h2>Disclaimer</h2>
-        <p>This feed is an operational, country-code-oriented GeoIP artifact derived from public sanctions sources. It is provided for informational purposes only, is not legal advice, and is not a substitute for sanctions screening, export-control review, or advice from qualified counsel. Country-level blocking is necessarily coarse: many sanctions programs are targeted at specific people, entities, sectors, or regions rather than an entire country. OFAC explicitly states that it does not maintain a single list of countries with which U.S. persons cannot do business. Use this feed carefully and verify obligations against the underlying authorities.</p>
       </section>
 
       <section class="panel">
@@ -106,18 +122,20 @@
 
       <section class="panel">
         <h2>Countries</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Name</th>
-              <th>Authorities</th>
-              <th>Score</th>
-              <th>Blocked</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>AF</td><td>Afghanistan</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
+        <div class="table-scroll">
+          <table>
+            <caption>Country evidence, score, and effective blocking decision</caption>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Name</th>
+                <th scope="col">Authorities</th>
+                <th scope="col">Score</th>
+                <th scope="col">Blocked</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>AF</td><td>Afghanistan</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
 <tr><td>BA</td><td>Bosnia and Herzegovina</td><td>UK</td><td>0</td><td>no</td></tr>
 <tr><td>BY</td><td>Belarus</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
 <tr><td>CD</td><td>Democratic Republic of the Congo</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
@@ -147,9 +165,15 @@
 <tr><td>UA</td><td>Ukraine</td><td>EU</td><td>0</td><td>no</td></tr>
 <tr><td>VE</td><td>Venezuela</td><td>EU, OFAC, UK</td><td>5</td><td>yes</td></tr>
 <tr><td>YE</td><td>Yemen</td><td>EU, OFAC, UK, UN</td><td>6</td><td>yes</td></tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </section>
+
+      <p class="small">
+        <a href="https://github.com/jtgorny/ofac-georestriction">Source code and documentation</a>
+        · <a href="https://github.com/jtgorny/ofac-georestriction/blob/main/LICENSE">Apache-2.0 license</a>
+      </p>
     </main>
   </body>
 </html>

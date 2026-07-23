@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+
+      - name: Compile Python
+        run: python3 -m compileall -q scripts tests
+
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Validate checked-in JSON
+        run: |
+          for file in config/*.json docs/*.json release-please-config.json .release-please-manifest.json; do
+            python3 -m json.tool "${file}" >/dev/null
+          done
+
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli2@0.23.1 README.md CONTRIBUTING.md SECURITY.md
+
+      - name: Reject OpenAI-style secrets in tracked files
+        run: |
+          if git grep -nE 'sk[-](proj-)?[A-Za-z0-9_-]{20,}' -- .; then
+            echo "Potential OpenAI API key found in a tracked file."
+            exit 1
+          fi

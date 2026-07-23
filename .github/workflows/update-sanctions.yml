@@ -15,15 +15,19 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # ratchet:actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # ratchet:actions/setup-python@v5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
+
+      - name: Run tests
+        run: python3 -m unittest discover -s tests
 
       - name: Build static site
         env:
@@ -41,5 +45,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs
-          git commit -m "Update sanctions feed"
-          git push
+          timestamp="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git commit -m "data: refresh sanctions feed (${timestamp})"
+          git push origin HEAD:main
