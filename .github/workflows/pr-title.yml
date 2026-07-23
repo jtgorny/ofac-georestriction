@@ -23,6 +23,7 @@ jobs:
             fix
             perf
             revert
+            build
             deps
             docs
             chore
