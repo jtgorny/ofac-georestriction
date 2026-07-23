@@ -6,10 +6,12 @@ import json
 import os
 import re
 import sys
+import time
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from html import escape, unescape
+from html import unescape
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -17,13 +19,23 @@ from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
+from render_site import render_index
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = ROOT / "docs"
 CONFIG_DIR = ROOT / "config"
 OVERRIDES_PATH = CONFIG_DIR / "overrides.json"
 
-USER_AGENT = "ofac-georestriction-site-builder/1.0 (+https://github.com/)"
+USER_AGENT = (
+    "ofac-georestriction-site-builder/1.0 "
+    "(+https://github.com/jtgorny/ofac-georestriction)"
+)
+DEFAULT_OPENAI_MODEL = "gpt-5-mini"
+SCHEMA_VERSION = "1.0"
+HTTP_TIMEOUT_SECONDS = 60
+HTTP_MAX_ATTEMPTS = 3
+COUNTRY_CODE_PATTERN = re.compile(r"^[A-Z]{2}$")
 
 OFAC_PROGRAMS_URL = "https://ofac.treasury.gov/sanctions-programs-and-country-information"
 OFAC_COUNTRY_FAQ_URL = (
@@ -243,50 +255,99 @@ class SourceHit:
 
 
 class BuildError(RuntimeError):
-    pass
+    """Raised when the feed cannot be built without weakening its guarantees."""
 
 
 def now_iso() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def configured_openai_model() -> str:
+    return os.getenv("OPENAI_MODEL", "").strip() or DEFAULT_OPENAI_MODEL
+
+
 def fetch_text(url: str, *, include_user_agent: bool = True) -> str:
-    headers = {"User-Agent": USER_AGENT} if include_user_agent else {}
-    request = Request(url, headers=headers)
     try:
-        with urlopen(request, timeout=60) as response:
-            return response.read().decode("utf-8")
-    except (HTTPError, URLError) as exc:
-        raise BuildError(f"failed to fetch {url}: {exc}") from exc
+        return fetch_bytes(url, include_user_agent=include_user_agent).decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise BuildError(f"source returned invalid UTF-8: {url}") from exc
 
 
 def fetch_bytes(url: str, *, include_user_agent: bool = True) -> bytes:
     headers = {"User-Agent": USER_AGENT} if include_user_agent else {}
-    request = Request(url, headers=headers)
+    for attempt in range(HTTP_MAX_ATTEMPTS):
+        request = Request(url, headers=headers)
+        try:
+            with urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
+                return response.read()
+        except HTTPError as exc:
+            retryable = exc.code == 429 or exc.code >= 500
+            if not retryable or attempt == HTTP_MAX_ATTEMPTS - 1:
+                raise BuildError(f"failed to fetch {url}: HTTP {exc.code}") from exc
+        except URLError as exc:
+            if attempt == HTTP_MAX_ATTEMPTS - 1:
+                raise BuildError(f"failed to fetch {url}: {exc.reason}") from exc
+        time.sleep(2**attempt)
+    raise AssertionError("unreachable")
+
+
+def parse_xml(xml_bytes: bytes, source_name: str) -> ET.Element:
     try:
-        with urlopen(request, timeout=60) as response:
-            return response.read()
-    except (HTTPError, URLError) as exc:
-        raise BuildError(f"failed to fetch {url}: {exc}") from exc
+        return ET.fromstring(xml_bytes)
+    except ET.ParseError as exc:
+        raise BuildError(f"{source_name} returned invalid XML: {exc}") from exc
 
 
 def load_overrides() -> dict[str, Any]:
     if not OVERRIDES_PATH.exists():
         raise BuildError(f"missing overrides file at {OVERRIDES_PATH}")
 
-    data = json.loads(OVERRIDES_PATH.read_text())
+    try:
+        data = json.loads(OVERRIDES_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise BuildError(f"invalid overrides file at {OVERRIDES_PATH}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise BuildError("overrides must be a JSON object")
+
+    def code_list(key: str) -> list[str]:
+        values = data.get(key, [])
+        if not isinstance(values, list) or not all(isinstance(code, str) for code in values):
+            raise BuildError(f"{key} must be an array of country-code strings")
+        normalized = sorted({code.strip().upper() for code in values})
+        invalid = [code for code in normalized if not COUNTRY_CODE_PATTERN.fullmatch(code)]
+        if invalid:
+            raise BuildError(f"{key} contains invalid ISO alpha-2 codes: {', '.join(invalid)}")
+        return normalized
+
+    notes = data.get("notes_by_country_code", {})
+    if not isinstance(notes, dict) or not all(
+        isinstance(code, str) and isinstance(note, str) for code, note in notes.items()
+    ):
+        raise BuildError("notes_by_country_code must map country-code strings to note strings")
+
+    includes = code_list("manual_include_country_codes")
+    excludes = code_list("manual_exclude_country_codes")
+    overlap = sorted(set(includes) & set(excludes))
+    if overlap:
+        raise BuildError(f"country codes cannot be both included and excluded: {', '.join(overlap)}")
+
+    normalized_notes = {
+        code.strip().upper(): note.strip()
+        for code, note in notes.items()
+        if note.strip()
+    }
+    invalid_note_codes = sorted(
+        code for code in normalized_notes if not COUNTRY_CODE_PATTERN.fullmatch(code)
+    )
+    if invalid_note_codes:
+        raise BuildError(
+            "notes_by_country_code contains invalid ISO alpha-2 codes: "
+            + ", ".join(invalid_note_codes)
+        )
     return {
-        "manual_include_country_codes": sorted(
-            {code.strip().upper() for code in data.get("manual_include_country_codes", []) if code}
-        ),
-        "manual_exclude_country_codes": sorted(
-            {code.strip().upper() for code in data.get("manual_exclude_country_codes", []) if code}
-        ),
-        "notes_by_country_code": {
-            code.strip().upper(): str(note).strip()
-            for code, note in data.get("notes_by_country_code", {}).items()
-            if code and str(note).strip()
-        },
+        "manual_include_country_codes": includes,
+        "manual_exclude_country_codes": excludes,
+        "notes_by_country_code": normalized_notes,
     }
 
 
@@ -351,7 +412,7 @@ def parse_eu_hits() -> tuple[list[SourceHit], dict[str, Any]]:
 
 def parse_uk_hits() -> tuple[list[SourceHit], dict[str, Any]]:
     xml_bytes = fetch_bytes(UK_XML_URL)
-    root = ET.fromstring(xml_bytes)
+    root = parse_xml(xml_bytes, "UK sanctions list")
     date_generated = root.findtext("DateGenerated")
     regime_names = sorted(
         {
@@ -378,7 +439,7 @@ def parse_uk_hits() -> tuple[list[SourceHit], dict[str, Any]]:
 
 def parse_un_hits() -> tuple[list[SourceHit], dict[str, Any]]:
     xml_bytes = fetch_bytes(UN_XML_URL)
-    root = ET.fromstring(xml_bytes)
+    root = parse_xml(xml_bytes, "UN consolidated list")
     date_generated = root.attrib.get("dateGenerated")
     prefixes: set[str] = set()
     for section_name in ("INDIVIDUALS", "ENTITIES"):
@@ -405,6 +466,15 @@ def parse_un_hits() -> tuple[list[SourceHit], dict[str, Any]]:
             )
         )
     return hits, {"page_url": UN_LIST_PAGE_URL, "source_url": UN_XML_URL, "date_generated": date_generated}
+
+
+def validate_source_hits(source_hits: dict[str, list[SourceHit]]) -> None:
+    empty_sources = sorted(authority for authority, hits in source_hits.items() if not hits)
+    if empty_sources:
+        raise BuildError(
+            "source parsing returned no recognized country regimes for: "
+            + ", ".join(empty_sources)
+        )
 
 
 def build_country_evidence(hits: list[SourceHit]) -> dict[str, dict[str, Any]]:
@@ -488,10 +558,6 @@ def hit_to_country_code(hit: SourceHit) -> str:
     raise BuildError(f"cannot resolve country code for hit: {hit}")
 
 
-def heuristic_recommendations(country_codes: set[str]) -> list[str]:
-    raise NotImplementedError("use score-based heuristic evaluation")
-
-
 def build_openai_payload(
     countries: dict[str, dict[str, Any]],
     overrides: dict[str, Any],
@@ -522,12 +588,12 @@ def build_openai_payload(
     }
 
 
-def call_openai_curation(payload: dict[str, Any]) -> dict[str, Any] | None:
+def call_openai_curation(payload: dict[str, Any]) -> dict[str, Any]:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        return None
+        raise BuildError("OPENAI_API_KEY is required for AI curation")
 
-    model = os.getenv("OPENAI_MODEL") or "gpt-5-mini"
+    model = configured_openai_model()
     request_body = {
         "model": model,
         "input": [
@@ -634,23 +700,23 @@ def call_openai_curation(payload: dict[str, Any]) -> dict[str, Any] | None:
     )
     try:
         with urlopen(request, timeout=120) as response:
-            payload = json.loads(response.read().decode("utf-8"))
+            response_json = json.loads(response.read().decode("utf-8"))
     except HTTPError as exc:
-        detail = ""
-        try:
-            body = exc.read().decode("utf-8", "replace").strip()
-            if body:
-                detail = f" | body: {body}"
-        except Exception:
-            pass
-        raise BuildError(f"OpenAI curation request failed: {exc}{detail}") from exc
+        raise BuildError(f"OpenAI curation request failed with HTTP {exc.code}") from exc
     except URLError as exc:
-        raise BuildError(f"OpenAI curation request failed: {exc}") from exc
+        raise BuildError(f"OpenAI curation request failed: {exc.reason}") from exc
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise BuildError("OpenAI curation returned an invalid JSON response") from exc
+    if not isinstance(response_json, dict):
+        raise BuildError("OpenAI curation returned an unexpected JSON response")
 
-    text = extract_response_text(payload)
+    text = extract_response_text(response_json)
     if not text:
         raise BuildError("OpenAI curation response did not include structured text output")
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise BuildError("OpenAI curation returned invalid structured output") from exc
 
 
 def extract_response_text(response_json: dict[str, Any]) -> str:
@@ -666,9 +732,14 @@ def extract_response_text(response_json: dict[str, Any]) -> str:
 
 
 def validate_ai_output(ai_output: dict[str, Any], allowed_codes: set[str]) -> dict[str, Any]:
-    recommended = {
-        code.strip().upper() for code in ai_output.get("recommended_country_codes", []) if code
-    }
+    if not isinstance(ai_output, dict):
+        raise BuildError("OpenAI curation output must be a JSON object")
+    raw_recommendations = ai_output.get("recommended_country_codes")
+    if not isinstance(raw_recommendations, list) or not all(
+        isinstance(code, str) for code in raw_recommendations
+    ):
+        raise BuildError("OpenAI recommended_country_codes must be an array of strings")
+    recommended = {code.strip().upper() for code in raw_recommendations}
     invalid = sorted(recommended - allowed_codes)
     if invalid:
         raise BuildError(f"OpenAI recommended unsupported country codes: {', '.join(invalid)}")
@@ -679,37 +750,46 @@ def validate_ai_output(ai_output: dict[str, Any], allowed_codes: set[str]) -> di
 
 def build_outputs() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     overrides = load_overrides()
-    ofac_hits, ofac_metadata = parse_ofac_hits()
-    eu_hits, eu_metadata = parse_eu_hits()
-    uk_hits, uk_metadata = parse_uk_hits()
-    un_hits, un_metadata = parse_un_hits()
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        ofac_future = executor.submit(parse_ofac_hits)
+        eu_future = executor.submit(parse_eu_hits)
+        uk_future = executor.submit(parse_uk_hits)
+        un_future = executor.submit(parse_un_hits)
+        ofac_hits, ofac_metadata = ofac_future.result()
+        eu_hits, eu_metadata = eu_future.result()
+        uk_hits, uk_metadata = uk_future.result()
+        un_hits, un_metadata = un_future.result()
+    validate_source_hits(
+        {"OFAC": ofac_hits, "EU": eu_hits, "UK": uk_hits, "UN": un_hits}
+    )
 
     all_hits = ofac_hits + eu_hits + uk_hits + un_hits
     countries = build_country_evidence(all_hits)
     source_union = sorted(countries.keys())
-    invalid_manual_includes = sorted(
-        code for code in overrides["manual_include_country_codes"] if code not in source_union
+    configured_codes = (
+        set(overrides["manual_include_country_codes"])
+        | set(overrides["manual_exclude_country_codes"])
+        | set(overrides["notes_by_country_code"])
     )
-    if invalid_manual_includes:
+    unsupported_override_codes = sorted(configured_codes - set(source_union))
+    if unsupported_override_codes:
         raise BuildError(
-            "manual_include_country_codes contains codes not supported by current source evidence: "
-            + ", ".join(invalid_manual_includes)
+            "overrides contain codes not supported by current source evidence: "
+            + ", ".join(unsupported_override_codes)
         )
     scorecards = compute_country_scores(countries)
     heuristic_codes = sorted(
         code for code, scorecard in scorecards.items() if scorecard["recommended_by_heuristic"]
     )
 
-    ai_mode = "disabled"
+    ai_mode = "openai" if os.getenv("OPENAI_API_KEY") else "heuristic"
     ai_output: dict[str, Any] | None = None
     ai_error: str | None = None
-    ai_model = os.getenv("OPENAI_MODEL") or "gpt-5-mini"
-    api_key = os.getenv("OPENAI_API_KEY")
-    if api_key:
-        ai_mode = "openai"
+    ai_model = configured_openai_model()
+    if ai_mode == "openai":
         try:
             ai_payload = build_openai_payload(countries, overrides, heuristic_codes)
-            ai_output = validate_ai_output(call_openai_curation(ai_payload) or {}, set(source_union))
+            ai_output = validate_ai_output(call_openai_curation(ai_payload), set(source_union))
         except BuildError as exc:
             ai_mode = "fallback"
             ai_error = str(exc)
@@ -724,12 +804,9 @@ def build_outputs() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     effective_codes.difference_update(overrides["manual_exclude_country_codes"])
     effective_codes = sorted(code for code in effective_codes if code in source_union)
 
-    for code in overrides["manual_exclude_country_codes"]:
-        if code in effective_codes:
-            effective_codes.remove(code)
-
     generated_at = now_iso()
     sanctions_payload = {
+        "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
         "disclaimer": DISCLAIMER,
         "sanctioned_country_codes": source_union,
@@ -755,6 +832,7 @@ def build_outputs() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     }
 
     evidence_payload = {
+        "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
         "disclaimer": DISCLAIMER,
         "curation": {
@@ -777,6 +855,7 @@ def build_outputs() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     }
 
     countries_payload = {
+        "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
         "heuristic_recommended_country_codes": heuristic_codes,
         "ai_recommended_country_codes": ai_recommended_codes,
@@ -788,172 +867,11 @@ def build_outputs() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     return sanctions_payload, evidence_payload, countries_payload
 
 
-def render_index(payload: dict[str, Any], evidence_payload: dict[str, Any]) -> str:
-    effective_codes = payload["effective_geoip_block_country_codes"]
-    effective_code_list = ", ".join(effective_codes) if effective_codes else "None"
-
-    rows = []
-    score_lookup = {
-        item["country_code"]: item for item in evidence_payload.get("scores", [])
-    }
-    for country in payload["countries"]:
-        authorities = ", ".join(country["authorities"])
-        decision = "yes" if country["country_code"] in effective_codes else "no"
-        score = score_lookup.get(country["country_code"], {}).get("score", 0)
-        rows.append(
-            "<tr>"
-            f"<td>{escape(country['country_code'])}</td>"
-            f"<td>{escape(country['country_name'])}</td>"
-            f"<td>{escape(authorities)}</td>"
-            f"<td>{escape(str(score))}</td>"
-            f"<td>{escape(decision)}</td>"
-            "</tr>"
-        )
-    rows_html = "\n".join(rows)
-
-    ai_mode = evidence_payload["curation"]["mode"]
-    ai_error = evidence_payload["curation"].get("ai_error")
-    ai_model = evidence_payload["curation"].get("model", "unknown")
-    ai_summary = evidence_payload["curation"].get("ai_summary")
-    if not ai_summary:
-        if ai_mode == "fallback" and ai_error:
-            ai_summary = f"AI review was attempted with model {ai_model}, but failed: {ai_error}"
-        elif ai_mode == "heuristic" and ai_error:
-            ai_summary = ai_error
-        else:
-            ai_summary = "No AI review was used for this build."
-
-    return f"""<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sanctions GeoIP Feed</title>
-    <link rel="icon" href="./favicon.ico" sizes="any">
-    <style>
-      :root {{
-        color-scheme: light;
-        --bg: #f5f7f2;
-        --panel: #ffffff;
-        --ink: #142119;
-        --muted: #516355;
-        --line: #d7e0d5;
-        --accent: #295135;
-      }}
-      * {{ box-sizing: border-box; }}
-      body {{
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background:
-          radial-gradient(circle at top left, rgba(41,81,53,0.08), transparent 38%),
-          linear-gradient(180deg, #eef3ec 0%, var(--bg) 100%);
-        color: var(--ink);
-      }}
-      main {{
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 40px 20px 72px;
-      }}
-      h1 {{
-        font-size: clamp(2rem, 5vw, 3.4rem);
-        line-height: 1;
-        margin: 0 0 12px;
-      }}
-      p, li {{
-        color: var(--muted);
-        line-height: 1.6;
-      }}
-      .panel {{
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 20px;
-        margin-top: 20px;
-        box-shadow: 0 12px 30px rgba(20, 33, 25, 0.05);
-      }}
-      .codes {{
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 1.1rem;
-        color: var(--accent);
-      }}
-      a {{
-        color: var(--accent);
-      }}
-      table {{
-        width: 100%;
-        border-collapse: collapse;
-      }}
-      th, td {{
-        text-align: left;
-        padding: 10px 8px;
-        border-bottom: 1px solid var(--line);
-        vertical-align: top;
-      }}
-      th {{
-        color: var(--ink);
-      }}
-      .small {{
-        font-size: 0.92rem;
-      }}
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>Sanctions GeoIP Feed</h1>
-      <p>
-        Static JSON for country-code-oriented GeoIP blocking, refreshed from OFAC, EU, UK, and UN
-        sanctions sources.
-      </p>
-
-      <section class="panel">
-        <p class="small"><strong>Generated:</strong> {escape(payload['generated_at'])}</p>
-        <p class="small"><strong>Effective country codes:</strong></p>
-        <p class="codes">{escape(effective_code_list)}</p>
-        <p class="small">
-          <a href="./countries.json">countries.json</a> ·
-          <a href="./sanctions.json">sanctions.json</a> ·
-          <a href="./evidence.json">evidence.json</a>
-        </p>
-      </section>
-
-      <section class="panel">
-        <h2>Disclaimer</h2>
-        <p>{escape(payload['disclaimer'])}</p>
-      </section>
-
-      <section class="panel">
-        <h2>Curation</h2>
-        <p class="small"><strong>Mode:</strong> {escape(ai_mode)}</p>
-        <p class="small"><strong>Model:</strong> {escape(ai_model)}</p>
-        <p class="small"><strong>Heuristic threshold:</strong> {HEURISTIC_THRESHOLD}</p>
-        <p>{escape(ai_summary)}</p>
-      </section>
-
-      <section class="panel">
-        <h2>Countries</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Name</th>
-              <th>Authorities</th>
-              <th>Score</th>
-              <th>Blocked</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows_html}
-          </tbody>
-        </table>
-      </section>
-    </main>
-  </body>
-</html>
-"""
-
-
 def write_json(path: Path, data: dict[str, Any]) -> None:
-    path.write_text(json.dumps(data, indent=2, sort_keys=False) + "\n")
+    path.write_text(
+        json.dumps(data, indent=2, sort_keys=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def main() -> int:
@@ -963,7 +881,10 @@ def main() -> int:
     write_json(DOCS_DIR / "sanctions.json", sanctions_payload)
     write_json(DOCS_DIR / "evidence.json", evidence_payload)
     write_json(DOCS_DIR / "countries.json", countries_payload)
-    (DOCS_DIR / "index.html").write_text(render_index(sanctions_payload, evidence_payload))
+    (DOCS_DIR / "index.html").write_text(
+        render_index(sanctions_payload, evidence_payload, HEURISTIC_THRESHOLD),
+        encoding="utf-8",
+    )
 
     print(
         "AI curation mode:",
